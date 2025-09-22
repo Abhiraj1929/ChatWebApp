@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
 interface ChatMessageProps {
   sender: string;
@@ -10,8 +10,8 @@ interface ChatMessageProps {
 const ChatMessage = ({ sender, message, isOwnMessage }: ChatMessageProps) => {
   const isSystemMessage = sender === "system";
 
-  // Animation variants for different message types
-  const messageVariants = {
+  // Fixed animation variants with proper TypeScript typing
+  const messageVariants: Variants = {
     hidden: {
       opacity: 0,
       x: isOwnMessage ? 50 : -50,
@@ -21,21 +21,14 @@ const ChatMessage = ({ sender, message, isOwnMessage }: ChatMessageProps) => {
       opacity: 1,
       x: 0,
       scale: 1,
-      transition: {
-        type: "spring",
-        damping: 25,
-        stiffness: 400,
-        duration: 0.4,
-      },
     },
     exit: {
       opacity: 0,
       scale: 0.8,
-      transition: { duration: 0.2 },
     },
   };
 
-  const systemMessageVariants = {
+  const systemMessageVariants: Variants = {
     hidden: {
       opacity: 0,
       y: 20,
@@ -45,12 +38,21 @@ const ChatMessage = ({ sender, message, isOwnMessage }: ChatMessageProps) => {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: {
-        type: "spring",
-        damping: 20,
-        stiffness: 300,
-      },
     },
+  };
+
+  // Transition configurations moved outside variants
+  const messageTransition = {
+    type: "spring" as const,
+    damping: 25,
+    stiffness: 400,
+    duration: 0.4,
+  };
+
+  const systemTransition = {
+    type: "spring" as const,
+    damping: 20,
+    stiffness: 300,
   };
 
   if (isSystemMessage) {
@@ -60,6 +62,7 @@ const ChatMessage = ({ sender, message, isOwnMessage }: ChatMessageProps) => {
         initial="hidden"
         animate="visible"
         exit="exit"
+        transition={systemTransition}
         className="flex justify-center mb-4"
       >
         <div className="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-600 px-4 py-2 rounded-full text-xs font-medium shadow-sm border border-gray-300/50">
@@ -75,6 +78,7 @@ const ChatMessage = ({ sender, message, isOwnMessage }: ChatMessageProps) => {
       initial="hidden"
       animate="visible"
       exit="exit"
+      transition={messageTransition}
       whileHover={{ scale: 1.02 }}
       className={`flex ${isOwnMessage ? "justify-end" : "justify-start"} mb-4`}
     >
@@ -102,7 +106,11 @@ const ChatMessage = ({ sender, message, isOwnMessage }: ChatMessageProps) => {
               boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
               y: -2,
             }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            transition={{
+              type: "spring" as const,
+              stiffness: 400,
+              damping: 25,
+            }}
             className={`
               px-4 py-3 rounded-2xl shadow-md relative backdrop-blur-sm
               ${
@@ -113,7 +121,7 @@ const ChatMessage = ({ sender, message, isOwnMessage }: ChatMessageProps) => {
               transition-all duration-200 hover:shadow-lg
             `}
           >
-            {/* Message text with typing animation effect */}
+            {/* Message text */}
             <motion.p
               initial={{ opacity: 0.7 }}
               animate={{ opacity: 1 }}
@@ -161,7 +169,7 @@ const ChatMessage = ({ sender, message, isOwnMessage }: ChatMessageProps) => {
           <motion.div
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, type: "spring", stiffness: 500 }}
+            transition={{ delay: 0.3, type: "spring" as const, stiffness: 500 }}
             className="flex items-center mt-1 mr-2"
           >
             <div className="flex space-x-1">
